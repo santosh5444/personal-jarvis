@@ -1,0 +1,8 @@
+# Core Voice I/O Dependencies
+pyttsx3>=2.90
+SpeechRecognition>=3.10.0
+sounddevice>=0.5.0
+colorama>=0.4.6
+
+# Local Speech-to-Text (Whisper)
+faster-whisper>=1.0.0
