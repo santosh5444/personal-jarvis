@@ -1,65 +1,73 @@
-# Voice I/O Prototype (Windows)
+# Jarvis - Voice AI Assistant (Windows)
 
-Stage 1 prototype proving voice-in (Speech-to-Text with local Whisper and Google Web Speech fallback) and voice-out (Text-to-Speech via offline Windows SAPI5 / `pyttsx3`).
+A voice AI assistant for Windows featuring local Whisper speech recognition, Groq ultra-fast LLM conversational intelligence, and native offline text-to-speech.
 
 ---
 
-## 🛠️ Windows Setup Guide (PowerShell)
+## ✨ Features
+- **Wake Word Engine**: Local, real-time openWakeWord (`hey_jarvis` ONNX model) with zero cloud latency and low CPU usage.
+- **Audio Chimes**: Instant dual-tone futuristic activation and sleep sounds via Windows native audio.
+- **Speech-to-Text (STT)**: High-accuracy local `faster-whisper` (`base.en` with Silero VAD & Beam Search) with automatic Google Web Speech API fallback.
+- **AI Intelligence**: Groq API integration (`llama-3.3-70b-versatile` / `llama-3.1-8b-instant`) with in-memory multi-turn session history.
+- **Spoken Prompt Tuning**: Generates concise, natural 1–3 sentence responses formatted specifically for voice output.
+- **Text-to-Speech (TTS)**: Instant, offline speech synthesis via Windows native SAPI5 (`pyttsx3`).
 
-### Step 1: Open PowerShell and Navigate to Project Directory
+---
+
+## 🔑 Configuration (.env)
+
+1. Sign up / log in to [Groq Console](https://console.groq.com/keys).
+2. Click **Create API Key** and copy your generated key (`gsk_...`).
+3. In the project folder `d:\jarvis\`, copy `.env.example` to `.env`:
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+4. Open `.env` and configure your settings:
+   ```env
+   GROQ_API_KEY=gsk_your_actual_key_here
+   GROQ_MODEL=llama-3.3-70b-versatile
+   WAKE_WORD_ENABLED=true
+   WAKE_WORD_THRESHOLD=0.5
+   ```
+
+---
+
+## 🛠️ Windows PowerShell Setup Guide
+
+### 1. Navigate to Directory
 ```powershell
 cd d:\jarvis
 ```
 
-### Step 2: Create and Activate Virtual Environment
+### 2. Activate Virtual Environment
 ```powershell
-# Create virtual environment
-python -m venv venv
-
-# If PowerShell script execution is restricted, enable it for this session:
+# If execution policy is restricted:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 
-# Activate the virtual environment
+# Activate venv:
 .\venv\Scripts\Activate.ps1
 ```
 
-### Step 3: Install Dependencies
+### 3. Install Dependencies
 ```powershell
-# Upgrade pip & wheel
-python -m pip install --upgrade pip setuptools wheel
-
-# Install required dependencies
 pip install -r requirements.txt
-```
-
-#### 💡 Windows PyAudio Note:
-On standard Python installations, `pip install PyAudio` installs the pre-compiled wheel directly.
-If you encounter a `portaudio.h` build error, install `pipwin` or install the prebuilt wheel:
-```powershell
-pip install pipwin
-pipwin install pyaudio
 ```
 
 ---
 
-## 🚀 Running the Prototype
+## 🚀 Running Jarvis
 
-Run the single-file prototype with:
+Start the assistant:
 ```powershell
 python main.py
 ```
 
-### What Happens on Startup:
-1. **TTS Check**: Initializes offline Windows SAPI5 speech synthesis via `pyttsx3`.
-2. **STT Engine Check**: 
-   - Attempts to load local `faster-whisper` (`tiny.en` model, CPU `int8`).
-   - If not installed or unsupported, it gracefully switches to `SpeechRecognition`'s Google Web Speech API fallback.
-3. **Microphone Calibration**: Listens to 1 second of ambient room sound to set dynamic energy threshold.
-4. **Interactive Loop**:
-   - Listens to your microphone.
-   - Prints the transcription: `👤 You said: "..."`
-   - Responds via voice: `🤖 Assistant: I heard: ...`
-   - Exits cleanly when you say *"exit"*, *"quit"*, *"stop"*, or press `Ctrl+C`.
+### Voice Controls:
+- **Wake Jarvis**: Say *"Hey Jarvis"* to wake Jarvis from standby. A futuristic activation chime will play and Jarvis will acknowledge.
+- **Speak normally**: Jarvis listens, transcribes with local Whisper, queries Groq for a concise answer, and speaks it aloud.
+- **Multi-turn conversation**: Jarvis remains awake for follow-up questions during the active session.
+- **Put to Standby**: Say *"sleep"*, *"go to sleep"*, or *"standby"* (or pause for 7 seconds of silence) to return to passive listening.
+- **Exit session**: Say *"exit"*, *"quit"*, *"stop"*, or press `Ctrl+C` to terminate the application.
 
 ---
 
@@ -67,7 +75,10 @@ python main.py
 ```text
 d:\jarvis\
 │
-├── main.py            # Complete single-file Voice I/O prototype
-├── requirements.txt   # Dependencies (pyttsx3, SpeechRecognition, PyAudio, etc.)
-└── README.md          # Setup & execution instructions
+├── main.py            # Main application (STT + Groq LLM + TTS + loop)
+├── requirements.txt   # Dependencies (groq, python-dotenv, faster-whisper, pyttsx3, etc.)
+├── .env.example       # Example environment variables template
+├── .env               # Your private Groq API key (ignored in git)
+├── .gitignore         # Ignores .env and venv
+└── README.md          # Setup & execution guide
 ```

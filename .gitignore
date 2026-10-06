@@ -1,4 +1,13 @@
-﻿__pycache__/
-*.pyc
-venv/
+# Environment variables (contains private API keys)
 .env
+
+# Python Virtual Environment & Bytecode
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# HuggingFace & Model Caches
+.cache/
+models/
